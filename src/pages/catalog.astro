@@ -1,7 +1,163 @@
 ---
 import MainLayout from '../layouts/MainLayout.astro';
+import Header from '../components/Header.astro';
+import Navigation from '../components/Navigation.astro';
+import Logo from '../components/Logo.astro';
+import ProductCard from '../components/ProductCard.astro';
+import Footer from '../components/Footer.astro';
 ---
 
 <MainLayout title="Каталог">
-  <h1>Каталог</h1>
+  <Header>
+    <Logo slot="logo" />
+    <Navigation slot="nav" />
+  </Header>
+  <main class="main-inner">
+    <header class="inner-header">
+      <h1 class="inner-header-title">Каталог</h1>
+      <ul class="breadcrumbs">
+        <li class="breadcrumbs-item">
+          <a class="breadcrumbs-link" href="index.html">Главная</a>
+        </li>
+        <li class="breadcrumbs-item">
+          <a class="breadcrumbs-link">Каталог</a>
+        </li>
+      </ul>
+    </header>
+
+    <section class="catalog-products">
+      <h2 class="visually-hidden">Список товаров с фильтрами</h2>
+      <form class="catalog-filter" action="https://echo.htmlacademy.ru/" method="get">
+
+
+        <fieldset class="catalog-filter-group">
+          <legend class="catalog-filter-title">Производители</legend>
+          <ul class="catalog-filter-list">
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="checkbox" name="bed-head-for-men">
+
+            Bed Head for Men
+              </label>
+            </li>
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="checkbox" name="homme-deep-cleansing-cool" checked>
+
+            Homme Deep Cleansing Cool
+              </label>
+            </li>
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="checkbox" name="so-intense" checked>
+
+            So Intense
+              </label>
+            </li>
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="checkbox" name="sprekenhus">
+
+            Sprekenhus
+              </label>
+            </li>
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="checkbox" name="firm-storе">
+
+            Firm Storе
+              </label>
+            </li>
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="checkbox" name="winter-body" checked>
+
+            Winter Body
+              </label>
+            </li>
+          </ul>
+        </fieldset>
+
+        <fieldset class="catalog-filter-group">
+          <legend class="catalog-filter-title">Группы товаров</legend>
+          <ul class="catalog-filter-list">
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="radio" name="product-group" value="shaving-supplies">
+
+            Бритвенные принадлежности
+              </label>
+            </li>
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="radio" name="product-group" value="care-products" checked>
+
+            Средства для ухода
+              </label>
+            </li>
+            <li class="catalog-filter-item">
+              <label class="control">
+                <input class="control-input" type="radio" name="product-group" value="accessories">
+
+            Аксессуары
+              </label>
+            </li>
+          </ul>
+        </fieldset>
+
+        <button class="button" type="submit">Показать</button>
+      </form>
+
+
+      <select class="select-control" aria-label="Сортировка">
+        <option value="popular">Сначала популярное</option>
+        <option value="cheap">Сначала дешёвое</option>
+        <option value="expensive">Сначала дорогое</option>
+      </select>
+      <a href="#" class="button button-light">
+        <span class="visually-hidden">Показать список</span>
+      </a>
+      <a class="button" href="#">
+        <span class="visually-hidden">Показать карточки</span>
+      </a>
+      <ul class="product-list">
+        <ProductCard title="Шампунь для мужчин Brews Daily" price={744} productLink="/product/brews-daily" />
+        <ProductCard title="Syoss шампунь Men Power & Strength" price={160} productLink="/product/syoss-men-power" />
+        <ProductCard title="Schauma шампунь для мужчин «Сила и объём с хмелем»" price={94} productLink="/product/shauma-for-men" />
+        <ProductCard title="Nivea Men шампунь-уход «Экстремальная свежесть с ментолом»" price={173} productLink="/product/nivea-for-men" />
+        <ProductCard title="Шампунь Amplifier Thickening" price={441} productLink="/product/amplifier-thickening" />
+        <ProductCard title="American Crew шампунь Anti-Dandruff" price={904} productLink="/product/american-crew-anti-dandruff" />
+      </ul>
+
+      <ul class="pagination">
+        <li class="pagination-item">
+          <a class="pagination-link pagination-prev pagination-disabled">
+            <span class="visually-hidden">Предыдущая страница</span>
+          </a>
+        </li>
+        <li class="pagination-item">
+          <a class="pagination-link pagination-current">1</a>
+        </li>
+        <li class="pagination-item">
+          <a class="pagination-link" href="#">2</a>
+        </li>
+        <li class="pagination-item">
+          <a class="pagination-link" href="#">3</a>
+        </li>
+        <li class="pagination-item">
+          <a class="pagination-link" href="#">4</a>
+        </li>
+        <li class="pagination-item">
+          <a class="pagination-link" href="#">5</a>
+        </li>
+        <li class="pagination-item">
+          <a class="pagination-link pagination-next" href="#">
+            <span class="visually-hidden">Следующая страница</span>
+          </a>
+        </li>
+      </ul>
+      <button class="button pagination-show-more" type="button">Показать ещё</button>
+    </section>
+  </main>
+  <Footer />
 </MainLayout>

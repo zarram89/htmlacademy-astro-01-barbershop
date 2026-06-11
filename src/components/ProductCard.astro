@@ -1,0 +1,18 @@
+---
+export interface Props {
+  title: string;
+  price: number;
+  imageSrc?: string;
+  productLink: string;
+}
+
+const { title, price, imageSrc = "/placeholder.jpg", productLink } = Astro.props;
+---
+<li class="product-card">
+  <a class="product-card-link" href={productLink}>
+    <img class="product-card-image" src={imageSrc} alt={title}>
+    <h3 class="product-card-title">{title}</h3>
+  </a>
+  <b class="product-card-price">{price} ₽</b>
+  <a class="product-card-button button" href="#">Купить</a>
+</li>
