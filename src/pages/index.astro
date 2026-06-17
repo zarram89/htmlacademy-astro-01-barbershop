@@ -1,17 +1,35 @@
 ---
-
+import BaseLayout from "@layouts/BaseLayout.astro";
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Barbershop</title>
-	</head>
-	<body>
-		<h1>Barbershop</h1>
-	</body>
-</html>
+<BaseLayout>
+  <section class="hero">
+    <div class="hero__inner">
+      <h1 class="hero__title">Барбершоп «Бородинский»</h1>
+      <p class="hero__slogan">Профессиональное мужское пространство в центре Санкт-Петербурга</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding: 80px 20px;
+    text-align: center;
+    background-color: var(--color-gray-100);
+  }
+
+  .hero__title {
+    font-family: var(--font-family-heading);
+    font-size: 48px;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .hero__slogan {
+    font-size: 18px;
+    color: var(--color-gray-500);
+    max-width: 600px;
+    margin: 0 auto;
+  }
+</style>

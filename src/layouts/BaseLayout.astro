@@ -1,0 +1,215 @@
+---
+import { SITE, NAVIGATION } from "@data/index";
+import "@styles/global.css";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  noindex?: boolean;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  image = "/favicon.svg",
+  noindex = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE.lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- SEO -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="author" content={SITE.author} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(image, SITE.url).href} />
+    <meta property="og:url" content={SITE.url} />
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Preload fonts -->
+    <link
+      rel="preload"
+      href="/fonts/pt-sans-regular.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+    <link rel="preload" href="/fonts/pt-sans-bold.woff2" as="font" type="font/woff2" crossorigin />
+    <link
+      rel="preload"
+      href="/fonts/pt-sans-narrow-bold.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
+  </head>
+
+  <body>
+    <!-- Skip link for accessibility -->
+    <a href="#main-content" class="visually-hidden skip-link"> Перейти к содержимому </a>
+
+    <header class="page-header">
+      <nav class="nav" aria-label="Основная навигация">
+        <ul class="nav__list">
+          {
+            NAVIGATION.map((item) => (
+              <li class="nav__item">
+                <a href={item.href} class="nav__link" aria-current={item.ariaCurrent || undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <footer class="page-footer">
+      <div class="page-footer__inner">
+        <div class="page-footer__contacts">
+          <h3>Контакты</h3>
+          <p>{SITE.contacts.address}</p>
+          <a href={`tel:${SITE.contacts.phone}`}>{SITE.contacts.phone}</a>
+          <br />
+          <a href={`mailto:${SITE.contacts.email}`}>{SITE.contacts.email}</a>
+        </div>
+
+        <div class="page-footer__socials">
+          <h3>Мы в соцсетях</h3>
+          <ul class="socials">
+            {
+              SITE.socials.map((social) => (
+                <li class="socials__item">
+                  <a
+                    href={social.href}
+                    class="socials__link"
+                    aria-label={social.label}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {social.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+
+        <div class="page-footer__copyright">
+          <p>&copy; {new Date().getFullYear()} {SITE.name}</p>
+          <a href="https://htmlacademy.ru" target="_blank" rel="noopener noreferrer">
+            HTML Academy
+          </a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .skip-link:focus {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    width: auto;
+    height: auto;
+    padding: 8px 16px;
+    background: var(--color-black);
+    color: var(--color-white);
+    font-size: 14px;
+    clip: unset;
+    clip-path: unset;
+  }
+
+  .page-header {
+    background-color: var(--color-black);
+    color: var(--color-white);
+  }
+
+  .nav__list {
+    display: flex;
+    gap: 0;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .nav__link {
+    display: block;
+    padding: 12px 20px;
+    font-family: var(--font-family-heading);
+    font-weight: 700;
+    font-size: 16px;
+    text-transform: uppercase;
+    color: var(--color-white);
+    transition: background-color var(--transition-fast);
+  }
+
+  .nav__link:hover,
+  .nav__link:focus-visible {
+    background-color: var(--color-brown-dark);
+  }
+
+  .page-footer {
+    background-color: var(--color-gray-800);
+    color: var(--color-white);
+    padding: 40px 0;
+  }
+
+  .page-footer__inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 40px;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 0 var(--container-padding);
+  }
+
+  .page-footer a {
+    color: var(--color-brown);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--transition-fast);
+  }
+
+  .page-footer a:hover,
+  .page-footer a:focus-visible {
+    color: var(--color-white);
+  }
+
+  .socials {
+    display: flex;
+    gap: 12px;
+  }
+
+  .socials__link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border: 1px solid var(--color-brown);
+    font-size: 0;
+  }
+</style>
