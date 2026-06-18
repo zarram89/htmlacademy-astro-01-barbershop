@@ -1,0 +1,313 @@
+---
+import NavIcon from "./NavIcon.astro";
+import CartIcon from "./icons/CartIcon.astro";
+import { SITE_NAVIGATION, USER_NAVIGATION } from "@data/navigation";
+
+export interface Props {
+  /** Показывать логотип в шапке (на внутренних страницах) */
+  showLogo?: boolean;
+  /** URL текущей страницы — для подсветки active */
+  currentPath?: string;
+}
+
+const { showLogo = false, currentPath = "/" } = Astro.props;
+---
+
+<header class="page-header">
+  <nav class="navigation">
+    <!-- Логотип (только на внутренних страницах) -->
+    {
+      showLogo && (
+        <a class="navigation-logo" href="/" aria-label="На главную">
+          <img
+            class="page-header-logo"
+            src="/images/logo.svg"
+            width="140"
+            height="18"
+            alt="Логотип барбершоп «Бородинский»"
+          />
+        </a>
+      )
+    }
+
+    <!-- Сайтовая навигация (текстовые ссылки слева) -->
+    <ul class="navigation-list">
+      {
+        SITE_NAVIGATION.map((item) => (
+          <li class="navigation-item">
+            <a
+              href={item.href}
+              class:list={[
+                "navigation-link",
+                { "navigation-link-current": item.current || currentPath === item.href },
+              ]}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <!-- Пользовательская навигация (иконки справа) -->
+    <ul class="navigation-list navigation-user">
+      {
+        USER_NAVIGATION.map((item) => (
+          <li class="navigation-item">
+            <a
+              href={item.href}
+              class:list={["navigation-link", item.mode === "icon-text" && "navigation-link-login"]}
+              aria-label={item.mode === "icon-only" ? item.ariaLabel || item.label : undefined}
+            >
+              {item.icon && <NavIcon name={item.icon} class="navigation-icon" size={16} />}
+
+              {item.mode === "text-only" || item.mode === "icon-text" ? (
+                <span>{item.label}</span>
+              ) : (
+                <span class="visually-hidden">{item.label}</span>
+              )}
+            </a>
+
+            {item.hasPopover && (
+              <div class="popover popover-cart" aria-label="Корзина">
+                <button class="popover-close-button button button-light" type="button">
+                  <CartIcon size={16} />2<span class="visually-hidden">Закрыть</span>
+                </button>
+                <div class="popover-content">
+                  <h2 class="popover-title">Корзина</h2>
+                  <ul class="cart-items-list">
+                    <li class="cart-item">
+                      <p class="cart-item-title">Стрижка машинкой</p>
+                      <p class="cart-item-price">800 ₽</p>
+                      <button class="cart-item-button button" type="button">
+                        <NavIcon name="close" size={16} />
+                        <span class="visually-hidden">Удалить из корзины</span>
+                      </button>
+                    </li>
+                    <li class="cart-item">
+                      <p class="cart-item-title">Стрижка усов</p>
+                      <p class="cart-item-price">1200 ₽</p>
+                      <button class="cart-item-button button" type="button">
+                        <NavIcon name="close" size={16} />
+                        <span class="visually-hidden">Удалить из корзины</span>
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            )}
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .page-header {
+    color: #ffffff;
+    background-color: #000000;
+  }
+
+  .navigation {
+    display: flex;
+    width: 940px;
+    margin: 0 auto;
+  }
+
+  .navigation-list {
+    display: flex;
+    flex-wrap: wrap;
+    width: 400px;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .navigation-item {
+    position: relative;
+  }
+
+  .navigation-link {
+    position: relative;
+    display: block;
+    padding: 24px 20px;
+    font-family: "PT Sans Narrow", sans-serif;
+    line-height: 22px;
+    font-weight: 700;
+    text-align: center;
+    color: #ffffff;
+    background-color: #000000;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .navigation-link:hover {
+    background-color: #595959;
+  }
+
+  .navigation-link:focus,
+  .navigation-link:active {
+    box-shadow: inset 0 0 0 4px #e7e7e7;
+    outline: none;
+  }
+
+  .navigation-link-current::before {
+    position: absolute;
+    right: 20px;
+    bottom: 0;
+    left: 20px;
+    height: 4px;
+    background-color: #ffffff;
+    content: "";
+  }
+
+  :global(.navigation-icon) {
+    fill: #dbdbdb;
+  }
+
+  :global(.navigation-link:hover .navigation-icon) {
+    fill: #242424;
+  }
+
+  :global(.navigation-link:focus .navigation-icon),
+  :global(.navigation-link:active .navigation-icon) {
+    fill: #dbdbdb;
+  }
+
+  .navigation-logo {
+    display: flex;
+    align-items: center;
+    width: 140px;
+    margin-right: 100px;
+  }
+
+  .navigation-user {
+    width: auto;
+    margin-left: auto;
+    max-width: 280px;
+  }
+
+  .navigation-user .navigation-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    min-height: 22px;
+  }
+
+  .navigation-link-login {
+    justify-content: flex-start;
+    padding-left: 44px;
+  }
+
+  :global(.navigation-link-login .navigation-icon) {
+    position: absolute;
+    right: auto;
+    left: 20px;
+    margin: auto 0;
+  }
+
+  /* Popover */
+  .popover {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+    display: none;
+    box-sizing: border-box;
+    width: 300px;
+    padding: 40px;
+    font-family: "PT Sans Narrow", sans-serif;
+    color: #242424;
+    background-color: #ffffff;
+    min-height: 186px;
+    box-shadow: 0 18px 40px rgb(79 70 60 / 16%);
+  }
+
+  .navigation-item:hover .popover,
+  .navigation-item:focus-within .popover {
+    display: block;
+  }
+
+  .popover-cart {
+    width: 420px;
+  }
+
+  .popover-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 72px;
+    height: 70px;
+  }
+
+  .popover-cart .popover-close-button {
+    padding-left: 20px;
+  }
+
+  .popover-content {
+    height: 100%;
+  }
+
+  .popover-title {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-size: 32px;
+    line-height: 35px;
+    color: #000000;
+    text-transform: uppercase;
+  }
+
+  .cart-items-list {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .cart-item {
+    display: grid;
+    grid-template-columns: 284px 56px;
+  }
+
+  .cart-item + .cart-item {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px dashed #595959;
+  }
+
+  .cart-item-title {
+    margin-top: 0;
+    margin-bottom: 2px;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+    color: #242424;
+    text-transform: uppercase;
+  }
+
+  .cart-item-price {
+    margin: 0;
+    font-family: "PT Sans", sans-serif;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 700;
+    color: #af7842;
+  }
+
+  .cart-item .button {
+    grid-row: 1 / 3;
+    grid-column: 2 / 4;
+  }
+
+  .button-light {
+    color: #242424;
+    background-color: #ffffff;
+  }
+</style>

@@ -6,8 +6,16 @@ export interface Social {
 
 export interface Contacts {
   phone: string;
+  /** Номер без пробелов и дефисов для href="tel:" */
+  phoneClean: string;
   email: string;
   address: string;
+}
+
+/** Часы работы: день и время */
+export interface WorkingHours {
+  day: string;
+  hours: string;
 }
 
 export const SITE = {
@@ -19,17 +27,13 @@ export const SITE = {
   lang: "ru",
   author: "HTML Academy",
   contacts: {
-    phone: "+7 (812) 555-66-66",
+    phone: "+7 800 555-86-28",
+    phoneClean: "+78005558628",
     email: "info@barbershop.ru",
-    address: "Санкт-Петербург, ул. Большая Конюшенная, д. 19/8",
+    address: "Санкт-Петербург, набережная реки Карповки, 5, литера П.",
   } satisfies Contacts,
-  socials: [
-    { label: "ВКонтакте", href: "#", icon: "vk" },
-    { label: "Telegram", href: "#", icon: "telegram" },
-    { label: "Instagram", href: "#", icon: "instagram" },
-  ] satisfies Social[],
   workingHours: [
-    { day: "Пн–Пт", hours: "10:00 – 20:00" },
-    { day: "Сб–Вс", hours: "11:00 – 19:00" },
-  ],
+    { day: "пн—пт", hours: "с 10:00 до 22:00" },
+    { day: "сб—вс", hours: "с 10:00 до 19:00" },
+  ] satisfies WorkingHours[],
 } as const;

@@ -1,0 +1,254 @@
+---
+import { Image } from "astro:assets";
+import { GALLERY_IMAGES } from "@data/gallery";
+---
+
+<section class="gallery" aria-label="Фотогалерея">
+  <h2 class="gallery-title">Фотогалерея</h2>
+
+  <div class="slider">
+    <div class="slider__viewport">
+      <div class="slider__container">
+        {
+          GALLERY_IMAGES.map((img, i) => (
+            <div class="slider__slide">
+              <Image
+                class="slider__image"
+                src={img.src}
+                alt={img.alt}
+                width={460}
+                height={290}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
+              />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <button class="slider__button slider__button--prev" type="button" aria-label="Предыдущее фото">
+      <svg
+        width="22"
+        height="22"
+        aria-hidden="true"
+        focusable="false"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M8.5 4.8L5 11l3.5 6.2 4.5.1L9.5 11 13 4.9l-4.5-.1z"></path>
+      </svg>
+    </button>
+    <button class="slider__button slider__button--next" type="button" aria-label="Следующее фото">
+      <svg
+        width="22"
+        height="22"
+        aria-hidden="true"
+        focusable="false"
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path d="M13.5 4.8L17 11l-3.5 6.2-4.5.1L12.5 11 9 4.9l4.5-.1z"></path>
+      </svg>
+    </button>
+  </div>
+
+  <div class="slider__dots" role="tablist" aria-label="Слайды галереи">
+    {
+      GALLERY_IMAGES.map((_, i) => (
+        <button
+          class:list={["slider__dot", i === 0 && "slider__dot--active"]}
+          type="button"
+          role="tab"
+          aria-selected={i === 0 ? "true" : "false"}
+          aria-label={`Фото ${i + 1}`}
+          data-index={i}
+        >
+          <span class="visually-hidden">Фото {i + 1}</span>
+        </button>
+      ))
+    }
+  </div>
+</section>
+
+<script>
+  import EmblaCarousel from "embla-carousel";
+
+  const container = document.querySelector(".gallery") as HTMLElement;
+  if (!container) throw new Error("Gallery not found");
+
+  const viewport = container.querySelector<HTMLElement>(".slider__viewport")!;
+  const prevBtn = container.querySelector<HTMLButtonElement>(".slider__button--prev");
+  const nextBtn = container.querySelector<HTMLButtonElement>(".slider__button--next");
+  const dots = container.querySelectorAll<HTMLButtonElement>(".slider__dot");
+
+  const embla = EmblaCarousel(viewport, {
+    loop: true,
+    align: "start",
+  });
+
+  // Prev / Next
+  prevBtn?.addEventListener("click", () => embla.scrollPrev());
+  nextBtn?.addEventListener("click", () => embla.scrollNext());
+
+  // Dots
+  function updateDots() {
+    const selectedIndex = embla.selectedScrollSnap();
+    dots.forEach((dot, i) => {
+      dot.classList.toggle("slider__dot--active", i === selectedIndex);
+      dot.setAttribute("aria-selected", i === selectedIndex ? "true" : "false");
+    });
+  }
+
+  dots.forEach((dot) => {
+    dot.addEventListener("click", () => {
+      const idx = Number(dot.dataset.index);
+      if (!isNaN(idx)) embla.scrollTo(idx);
+    });
+  });
+
+  embla.on("select", updateDots);
+  embla.on("reInit", updateDots);
+
+  // Keyboard
+  container.addEventListener("keydown", (e: KeyboardEvent) => {
+    if (e.key === "ArrowLeft") {
+      e.preventDefault();
+      embla.scrollPrev();
+      prevBtn?.focus();
+    }
+    if (e.key === "ArrowRight") {
+      e.preventDefault();
+      embla.scrollNext();
+      nextBtn?.focus();
+    }
+  });
+</script>
+
+<style>
+  .gallery {
+    width: var(--gallery-width, 460px);
+    margin-bottom: 60px;
+  }
+
+  .gallery-title {
+    margin-top: 0;
+    margin-bottom: 32px;
+    font-family: var(--font-family-heading);
+    font-size: 32px;
+    line-height: 35px;
+    text-align: var(--gallery-title-align, center);
+    text-transform: uppercase;
+  }
+
+  .slider__viewport {
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  .slider {
+    position: relative;
+    width: 100%;
+    max-width: 460px;
+    margin: 0 auto;
+    margin-bottom: 16px;
+  }
+
+  .slider__container {
+    display: flex;
+    backface-visibility: hidden;
+  }
+
+  .slider__slide {
+    flex: 0 0 100%;
+    min-width: 0;
+  }
+
+  .slider__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+  }
+
+  /* Buttons */
+  .slider__button {
+    position: absolute;
+    top: 50%;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    color: #ffffff;
+    background-color: #242424;
+    border: none;
+    cursor: pointer;
+    transform: translateY(-50%);
+    transition:
+      background-color var(--transition-fast),
+      opacity var(--transition-fast);
+  }
+
+  .slider__button:hover {
+    background-color: #814b18;
+  }
+
+  .slider__button:focus {
+    outline: 2px solid #dbb590;
+    background-color: #4e2e0e;
+  }
+
+  .slider__button:active {
+    opacity: 0.6;
+  }
+
+  .slider__button--prev {
+    left: -70px;
+  }
+
+  .slider__button--next {
+    right: -70px;
+  }
+
+  /* Dots */
+  .slider__dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .slider__dot {
+    width: 12px;
+    height: 12px;
+    padding: 0;
+    background-color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    opacity: 0.4;
+    transition:
+      opacity var(--transition-fast),
+      background-color var(--transition-fast);
+  }
+
+  .slider__dot:hover {
+    opacity: 0.6;
+  }
+
+  .slider__dot:focus {
+    outline: 2px solid #dbb590;
+    outline-offset: 2px;
+  }
+
+  .slider__dot--active {
+    opacity: 1;
+    cursor: default;
+  }
+
+  .slider__dot--active:hover {
+    opacity: 1;
+  }
+</style>

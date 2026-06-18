@@ -76,10 +76,10 @@ mkdir -p src/{components,layouts,pages,styles,data,assets}
     "baseUrl": ".",
     "paths": {
       "@components/*": ["src/components/*"],
-      "@layouts/*":   ["src/layouts/*"],
-      "@data/*":      ["src/data/*"],
-      "@styles/*":    ["src/styles/*"],
-      "@assets/*":    ["src/assets/*"]
+      "@layouts/*": ["src/layouts/*"],
+      "@data/*": ["src/data/*"],
+      "@styles/*": ["src/styles/*"],
+      "@assets/*": ["src/assets/*"]
     }
   }
 }
@@ -237,7 +237,9 @@ export default defineConfig({
 
 *,
 *::before,
-*::after { box-sizing: border-box; }
+*::after {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
@@ -246,12 +248,34 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-img { display: block; max-width: 100%; height: auto; }
-ul, ol { margin: 0; padding: 0; list-style: none; }
-h1, h2, h3, h4, h5, h6, p { margin: 0; }
-button { font: inherit; cursor: pointer; }
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+ul,
+ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  margin: 0;
+}
+button {
+  font: inherit;
+  cursor: pointer;
+}
 
-.visually-hidden { /* клип-райер */ }
+.visually-hidden {
+  /* клип-райер */
+}
 ```
 
 ---
@@ -269,7 +293,12 @@ export interface Props {
   noindex?: boolean;
 }
 
-const { title = "Default", description = "Default", image = "/favicon.svg", noindex = false } = Astro.props;
+const {
+  title = "Default",
+  description = "Default",
+  image = "/favicon.svg",
+  noindex = false,
+} = Astro.props;
 ---
 
 <!doctype html>
@@ -302,10 +331,18 @@ const { title = "Default", description = "Default", image = "/favicon.svg", noin
 
 ```ts
 // Пример единого источника истины
-export const SITE = { /* site config */ };
-export const NAVIGATION = [ /* menu items */ ];
-export const SERVICES = [ /* services with prices */ ];
-export const TEAM = [ /* team members */ ];
+export const SITE = {
+  /* site config */
+};
+export const NAVIGATION = [
+  /* menu items */
+];
+export const SERVICES = [
+  /* services with prices */
+];
+export const TEAM = [
+  /* team members */
+];
 ```
 
 ---

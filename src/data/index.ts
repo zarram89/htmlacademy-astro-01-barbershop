@@ -1,11 +1,17 @@
 export { SITE } from "./site";
-export type { Social, Contacts } from "./site";
+export type { Social, Contacts, WorkingHours } from "./site";
 
-export { NAVIGATION } from "./navigation";
-export type { NavItem } from "./navigation";
+export { SITE_NAVIGATION, USER_NAVIGATION } from "./navigation";
+export type { NavItem, NavItemMode } from "./navigation";
 
-export { SERVICE_CATEGORIES, ALL_SERVICES } from "./services";
-export type { Service, ServiceCategory } from "./services";
+export { ADVANTAGES } from "./advantages";
+export type { Advantage } from "./advantages";
 
-export { TEAM } from "./team";
-export type { TeamMember } from "./team";
+export { SERVICES } from "./services";
+export type { Service } from "./services";
+
+export { GALLERY_IMAGES } from "./gallery";
+export type { GalleryImage } from "./gallery";
+
+export { PRODUCTS, MANUFACTURERS, PRODUCT_GROUPS, SORT_OPTIONS } from "./catalog";
+export type { Product, Manufacturer, ProductGroup, SortOption } from "./catalog";

@@ -19,6 +19,12 @@
     ],
     "import-notation": "string",
     "color-hex-length": "long",
+    "selector-pseudo-class-no-unknown": [
+      true,
+      {
+        "ignorePseudoClasses": ["global"]
+      }
+    ],
     "keyframes-name-pattern": [
       "^[a-z][a-z0-9]*(-[a-z0-9]+)*$",
       {

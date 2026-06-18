@@ -1,0 +1,716 @@
+---
+import { Image } from "astro:assets";
+import BaseLayout from "@layouts/BaseLayout.astro";
+import { PRODUCTS, MANUFACTURERS, PRODUCT_GROUPS, SORT_OPTIONS } from "@data/catalog";
+import cat1 from "@assets/images/catalog/1.jpg";
+import cat2 from "@assets/images/catalog/2.jpg";
+import cat3 from "@assets/images/catalog/3.jpg";
+import cat4 from "@assets/images/catalog/4.jpg";
+import cat5 from "@assets/images/catalog/5.jpg";
+import cat6 from "@assets/images/catalog/6.jpg";
+
+const catalogImages: Record<string, ImageMetadata> = {
+  "/images/catalog/1.jpg": cat1,
+  "/images/catalog/2.jpg": cat2,
+  "/images/catalog/3.jpg": cat3,
+  "/images/catalog/4.jpg": cat4,
+  "/images/catalog/5.jpg": cat5,
+  "/images/catalog/6.jpg": cat6,
+};
+---
+
+<BaseLayout
+  title="Каталог — Барбершоп «Бородинский»"
+  mainClass="main-inner"
+  headerLogo={true}
+  currentPath={Astro.url.pathname}
+>
+  <div class="page-container">
+    <!-- Хлебные крошки + заголовок -->
+    <header class="inner-header">
+      <h1 class="inner-header-title">Каталог</h1>
+      <ul class="breadcrumbs">
+        <li class="breadcrumbs-item">
+          <a class="breadcrumbs-link" href="/">Главная</a>
+        </li>
+        <li class="breadcrumbs-item">
+          <a class="breadcrumbs-link">Каталог</a>
+        </li>
+      </ul>
+    </header>
+
+    <!-- Фильтр + товары -->
+    <section class="catalog-products">
+      <h2 class="visually-hidden">Список товаров с фильтрами</h2>
+
+      <!-- Форма фильтрации (левая колонка) -->
+      <form class="catalog-filter" action="https://echo.htmlacademy.ru/" method="get">
+        <fieldset class="catalog-filter-group">
+          <legend class="catalog-filter-title">Цена:</legend>
+
+          <div class="range">
+            <div class="range-scale">
+              <div class="range-bar">
+                <button class="range-toggle toggle-min" type="button">
+                  <span class="visually-hidden">Изменить минимальную цену</span>
+                </button>
+                <button class="range-toggle toggle-max" type="button">
+                  <span class="visually-hidden">Изменить максимальную цену</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="range-wrapper-inputs">
+              <label class="catalog-filter-label">
+                от
+                <input class="range-input" type="number" value="50" name="min-price" />
+                ₽
+              </label>
+              <label class="catalog-filter-label">
+                до
+                <input
+                  class="range-input range-input--max"
+                  type="number"
+                  value="1500"
+                  name="max-price"
+                />
+                ₽
+              </label>
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="catalog-filter-group">
+          <legend class="catalog-filter-title">Производители</legend>
+          <ul class="catalog-filter-list">
+            {
+              MANUFACTURERS.map((m, i) => (
+                <li class="catalog-filter-item">
+                  <label class="control">
+                    <input
+                      class="visually-hidden control-input"
+                      type="checkbox"
+                      name={m.id}
+                      checked={i === 0}
+                    />
+                    <span class="control-mark" />
+                    <span class="control-label">{m.name}</span>
+                  </label>
+                </li>
+              ))
+            }
+          </ul>
+        </fieldset>
+
+        <fieldset class="catalog-filter-group">
+          <legend class="catalog-filter-title">Группы товаров</legend>
+          <ul class="catalog-filter-list">
+            {
+              PRODUCT_GROUPS.map((g, i) => (
+                <li class="catalog-filter-item">
+                  <label class="control">
+                    <input
+                      class="visually-hidden control-input"
+                      type="radio"
+                      name="product-group"
+                      value={g.id}
+                      checked={i === 0}
+                    />
+                    <span class="control-mark" />
+                    <span class="control-label">{g.name}</span>
+                  </label>
+                </li>
+              ))
+            }
+          </ul>
+        </fieldset>
+
+        <button class="button" type="submit">Показать</button>
+      </form>
+
+      <!-- Правая колонка: сортировка + сетка товаров + пагинация -->
+      <div class="catalog-right-column">
+        <!-- Сортировка -->
+        <div class="sorting-container">
+          <div class="select sorting-type">
+            <select class="select-control" aria-label="Сортировка">
+              {
+                SORT_OPTIONS.map((opt) => (
+                  <option value={opt.value} selected={opt.value === "popular"}>
+                    {opt.label}
+                  </option>
+                ))
+              }
+            </select>
+          </div>
+
+          <a href="#" class="card-grid-toggle">
+            <span class="visually-hidden">Показать список</span>
+            <svg
+              width="16"
+              height="16"
+              aria-hidden="true"
+              focusable="false"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M2 0a2 2 0 100 4 2 2 0 000-4zm0 6a2 2 0 100 4 2 2 0 000-4zm-2 8a2 2 0 114 0 2 2 0 01-4 0zM7 1a1 1 0 000 2h8a1 1 0 100-2H7zM6 8a1 1 0 011-1h8a1 1 0 110 2H7a1 1 0 01-1-1zm1 5a1 1 0 100 2h8a1 1 0 100-2H7z"
+              ></path>
+            </svg>
+          </a>
+          <a href="#" class="card-grid-toggle card-grid-toggle-current">
+            <span class="visually-hidden">Показать карточки</span>
+            <svg
+              width="16"
+              height="16"
+              aria-hidden="true"
+              focusable="false"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 16 16"
+            >
+              <path
+                d="M0 2a2 2 0 114 0 2 2 0 01-4 0zm6 0a2 2 0 114 0 2 2 0 01-4 0zm10 0a2 2 0 10-4 0 2 2 0 004 0zM0 8a2 2 0 114 0 2 2 0 01-4 0zm10 0a2 2 0 10-4 0 2 2 0 004 0zm2 0a2 2 0 114 0 2 2 0 01-4 0zm-8 6a2 2 0 10-4 0 2 2 0 004 0zm2 0a2 2 0 114 0 2 2 0 01-4 0zm10 0a2 2 0 10-4 0 2 2 0 004 0z"
+              ></path>
+            </svg>
+          </a>
+        </div>
+
+        <!-- Сетка товаров -->
+        <ul class="product-list">
+          {
+            PRODUCTS.map((product) => (
+              <li class="product-card">
+                <a class="product-card-image-link" href="#">
+                  <Image
+                    class="product-card-image"
+                    src={catalogImages[product.image]}
+                    width={220}
+                    height={200}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </a>
+                <div class="product-card-content">
+                  <a class="product-card-title-link" href="#">
+                    <h3 class="product-card-title">{product.name}</h3>
+                  </a>
+                  <span class="product-card-price">{product.price}&nbsp;₽</span>
+                  <a class="button product-card-button" href="#">
+                    Купить
+                  </a>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+
+        <!-- Пагинация -->
+        <div class="pagination-container">
+          <ul class="pagination">
+            <li class="pagination-item">
+              <a class="pagination-link pagination-prev pagination-disabled">
+                <span class="visually-hidden">Предыдущая страница</span>
+              </a>
+            </li>
+            {
+              [1, 2, 3, 4, 5].map((page) => (
+                <li class="pagination-item">
+                  <a
+                    class:list={["pagination-link", page === 1 && "pagination-current"]}
+                    href={page === 1 ? undefined : "#"}
+                  >
+                    {page}
+                  </a>
+                </li>
+              ))
+            }
+            <li class="pagination-item">
+              <a class="pagination-link pagination-next" href="#">
+                <span class="visually-hidden">Следующая страница</span>
+              </a>
+            </li>
+          </ul>
+          <button class="button pagination-show-more" type="button">Показать ещё</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  /* ── Шапка внутренней страницы ── */
+  .inner-header {
+    margin-bottom: 32px;
+  }
+
+  .inner-header-title {
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-family: var(--font-family-heading);
+    font-size: 32px;
+    line-height: 35px;
+    text-transform: uppercase;
+  }
+
+  /* ── Хлебные крошки ── */
+  .breadcrumbs {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    color: #242424;
+    list-style-type: none;
+  }
+
+  .breadcrumbs-item {
+    position: relative;
+    margin-right: 32px;
+  }
+
+  .breadcrumbs-item::after {
+    position: absolute;
+    top: 7px;
+    right: -20px;
+    width: 8px;
+    height: 8px;
+    background-color: #242424;
+    content: "";
+    transform: rotate(45deg);
+  }
+
+  .breadcrumbs-item:last-child::after {
+    content: none;
+  }
+
+  .breadcrumbs-link {
+    line-height: 22px;
+    color: inherit;
+  }
+
+  /* ── Каталог: фильтр + товары ── */
+  .catalog-products {
+    display: flex;
+  }
+
+  /* Фильтр (левая колонка) */
+  .catalog-filter {
+    width: 220px;
+    margin-right: 20px;
+  }
+
+  .catalog-filter-group {
+    margin: 0;
+    margin-bottom: 40px;
+    padding: 0;
+    border: none;
+  }
+
+  .catalog-filter-title {
+    margin-bottom: 22px;
+    padding: 0;
+    font-family: var(--font-family-heading);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+    color: #000000;
+    text-transform: uppercase;
+  }
+
+  /* Range (Price) */
+  .range {
+    max-width: 220px;
+    overflow: auto;
+    padding-top: 8px;
+  }
+
+  .range-scale {
+    position: relative;
+    height: 4px;
+    margin-bottom: 16px;
+    background-color: #242424;
+    border-radius: 2px;
+  }
+
+  .range-bar {
+    position: absolute;
+    top: 0;
+    left: 42px;
+    width: 136px;
+    height: 4px;
+    background-color: #af7842;
+  }
+
+  .range-toggle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #ffffff;
+    border: 2px solid #242424;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+
+  .range-toggle:hover {
+    background-color: #dbb590;
+  }
+
+  .range-toggle:active,
+  .range-toggle:focus {
+    outline: 3px solid #dbb590;
+  }
+
+  .toggle-min {
+    top: -8px;
+    left: -10px;
+  }
+
+  .toggle-max {
+    top: -8px;
+    right: -10px;
+  }
+
+  .range-wrapper-inputs {
+    display: flex;
+    justify-content: center;
+  }
+
+  .catalog-filter-label {
+    display: flex;
+    margin-right: 5px;
+    line-height: 22px;
+  }
+
+  .range-input {
+    width: 30px;
+    padding: 0 2px;
+    font: inherit;
+    text-align: center;
+    background-color: transparent;
+    border: none;
+    appearance: textfield;
+  }
+
+  .range-input--max {
+    width: 37px;
+  }
+
+  .range-input::-webkit-outer-spin-button,
+  .range-input::-webkit-inner-spin-button {
+    appearance: none;
+    margin: 0;
+  }
+
+  /* ── Кастомные контролы (checkbox/radio) ── */
+  .control {
+    position: relative;
+    display: block;
+    padding-left: 36px;
+    line-height: 22px;
+  }
+
+  .control-mark {
+    position: absolute;
+    top: 2px;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #242424;
+  }
+
+  .control-input:focus ~ .control-mark,
+  .control-input:active ~ .control-mark {
+    border-color: #af7842;
+  }
+
+  .control:hover .control-mark {
+    border-color: #814b18;
+  }
+
+  .control-input:disabled + .control-mark {
+    border-color: #242424;
+  }
+
+  /* Checkbox — checked state (галочка «X») */
+  .control-input[type="checkbox"]:checked + .control-mark::before,
+  .control-input[type="checkbox"]:checked + .control-mark::after {
+    position: absolute;
+    top: 7px;
+    left: 2px;
+    width: 12px;
+    height: 2px;
+    background-color: #242424;
+    content: "";
+  }
+
+  .control-input[type="checkbox"]:checked + .control-mark::before {
+    transform: rotate(45deg);
+  }
+
+  .control-input[type="checkbox"]:checked + .control-mark::after {
+    transform: rotate(-45deg);
+  }
+
+  /* Radio — checked state (точка) */
+  .control-input[type="radio"] + .control-mark {
+    border-radius: 50%;
+  }
+
+  .control-input[type="radio"]:checked + .control-mark::before {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 8px;
+    height: 8px;
+    background-color: #242424;
+    border-radius: 50%;
+    content: "";
+  }
+
+  .control-label {
+    line-height: 22px;
+    font-weight: 700;
+  }
+
+  .catalog-filter-list {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .catalog-filter-item:not(:last-child) {
+    margin-bottom: 16px;
+  }
+
+  /* ── Правая колонка каталога ── */
+  .catalog-right-column {
+    width: 700px;
+  }
+
+  /* Sorting bar */
+  .sorting-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    margin-bottom: 16px;
+    padding: 16px;
+    color: #000000;
+    background-color: #ffffff;
+  }
+
+  .select {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 260px;
+    margin-right: auto;
+  }
+
+  .select-control {
+    width: 100%;
+    padding: 8px 14px;
+    padding-right: 48px;
+    font: inherit;
+    font-weight: 700;
+    background-color: #ffffff;
+    border: 2px solid #242424;
+    background-image: url("/images/select-arrow.svg");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    appearance: none;
+  }
+
+  .select-control:hover,
+  .select-control:focus,
+  .select-control:active {
+    border-color: #af7842;
+  }
+
+  .select-control:focus,
+  .select-control:active {
+    outline: 2px solid #dbb590;
+  }
+
+  .card-grid-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 44px;
+    background-color: #ffffff;
+  }
+
+  .card-grid-toggle:hover {
+    background-color: #814b18;
+  }
+
+  .card-grid-toggle:focus,
+  .card-grid-toggle:active {
+    outline: 2px solid #dbb590;
+  }
+
+  .card-grid-toggle:hover svg {
+    fill: #ffffff;
+  }
+
+  .card-grid-toggle svg {
+    fill: #000000;
+  }
+
+  .card-grid-toggle-current {
+    background-color: #000000;
+  }
+
+  .card-grid-toggle-current:hover {
+    background-color: #000000;
+  }
+
+  .card-grid-toggle-current svg {
+    fill: #ffffff;
+  }
+
+  .card-grid-toggle-current:hover svg {
+    fill: #ffffff;
+  }
+
+  /* ── Сетка товаров ── */
+  .product-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin: 0;
+    margin-bottom: 24px;
+    padding: 0;
+    gap: 20px;
+    list-style-type: none;
+  }
+
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    background-color: #ffffff;
+  }
+
+  .product-card-image-link {
+    background-color: #f6f6f6;
+  }
+
+  .product-card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    padding: 16px;
+  }
+
+  .product-card-image {
+    object-fit: contain;
+    max-width: 100%;
+    display: block;
+  }
+
+  .product-card-title-link {
+    display: block;
+    margin-bottom: 8px;
+    text-decoration: none;
+  }
+
+  .product-card-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #000000;
+  }
+
+  .product-card-price {
+    margin-bottom: 16px;
+    font-size: 24px;
+    line-height: 29px;
+    font-weight: 700;
+    color: #814b18;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+  }
+
+  .product-card-button {
+    margin-top: auto;
+  }
+
+  /* ── Пагинация ── */
+  .pagination-container {
+    display: flex;
+    padding: 16px;
+    background-color: #ffffff;
+  }
+
+  .pagination {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .pagination-item {
+    margin-bottom: 5px;
+  }
+
+  .pagination-item:not(:last-child) {
+    margin-right: 8px;
+  }
+
+  .pagination-link {
+    display: block;
+    box-sizing: border-box;
+    min-width: 50px;
+    min-height: 44px;
+    padding: 14px 20px;
+    line-height: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #000000;
+    text-decoration: none;
+  }
+
+  .pagination-link:hover {
+    background-color: #814b18;
+  }
+
+  .pagination-link:focus,
+  .pagination-link:active {
+    outline: 2px solid #dbb590;
+    background-color: #4e2e0e;
+  }
+
+  .pagination-current {
+    color: #242424;
+    background-color: #ffffff;
+  }
+
+  .pagination-prev {
+    background-image: url("/images/arrow-right.svg");
+    background-position: 20px center;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    padding-right: 18px;
+    transform: rotate(180deg);
+  }
+
+  .pagination-next {
+    background-image: url("/images/arrow-right.svg");
+    background-position: 20px center;
+    background-size: 16px 16px;
+    background-repeat: no-repeat;
+    padding-left: 40px;
+    padding-right: 18px;
+  }
+
+  .pagination-disabled {
+    background-color: #595959;
+  }
+
+  .pagination-show-more {
+    margin-left: auto;
+    max-width: 170px;
+  }
+</style>
