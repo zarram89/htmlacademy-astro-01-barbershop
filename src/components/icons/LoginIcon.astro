@@ -1,0 +1,24 @@
+---
+export interface Props {
+  size?: number;
+  class?: string;
+}
+
+const { size = 16 } = Astro.props;
+---
+
+<svg
+  class={Astro.props.class}
+  width={size}
+  height={size}
+  aria-hidden="true"
+  focusable="false"
+  fill="none"
+  xmlns="http://www.w3.org/2000/svg"
+>
+  <path
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    d="M9 2h5v12H9v2h7V0H9v2zM4.293 3.707L7.536 6.95H0v2h7.536l-3.243 3.242 1.414 1.415 4.95-4.95.707-.707-.707-.707-4.95-4.95-1.414 1.414z"
+    fill="#BDBDBD"></path>
+</svg>

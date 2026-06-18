@@ -1,0 +1,196 @@
+---
+import CloseIcon from "@components/icons/CloseIcon.astro";
+---
+
+<div class="modal-container modal-container--closed" id="auth-modal" aria-hidden="true">
+  <div class="modal modal-auth" role="dialog" aria-modal="true" aria-labelledby="modal-auth-title">
+    <button class="modal-close-button" type="button" data-modal-close>
+      <CloseIcon size={16} />
+      <span class="visually-hidden">Закрыть</span>
+    </button>
+
+    <section class="modal-content">
+      <h2 class="modal-title" id="modal-auth-title">Личный кабинет</h2>
+
+      <form class="auth-form" action="https://echo.htmlacademy.ru/" method="post" novalidate>
+        <p class="field-group">
+          <label class="visually-hidden" for="auth-login">Логин</label>
+          <input
+            class="auth-form-field field"
+            type="text"
+            id="auth-login"
+            name="auth-login"
+            placeholder="Логин"
+            autocomplete="username"
+          />
+        </p>
+
+        <p class="field-group">
+          <label class="visually-hidden" for="auth-password">Пароль</label>
+          <input
+            class="auth-form-field field"
+            type="password"
+            id="auth-password"
+            name="auth-password"
+            placeholder="Пароль"
+            autocomplete="current-password"
+          />
+        </p>
+
+        <p class="auth-form-user-options field-group">
+          <label class="auth-form-checkbox control">
+            <input class="visually-hidden control-input" type="checkbox" name="remember" />
+            <span class="control-mark"></span>
+            <span class="control-label">Запомнить меня</span>
+          </label>
+          <a class="auth-form-recovery" href="#">Забыл пароль</a>
+        </p>
+
+        <button class="button auth-form-button" type="submit">Войти</button>
+        <a class="button button-feedback auth-form-register" href="#">Регистрация</a>
+      </form>
+    </section>
+  </div>
+</div>
+
+<script>
+  (function () {
+    const modal = document.getElementById("auth-modal");
+    if (!modal) return;
+
+    const trigger = document.querySelector<HTMLAnchorElement>(
+      '.navigation-link-login, [href="#"].navigation-link:has(.navigation-icon)',
+    );
+    const closeBtn = modal.querySelector<HTMLButtonElement>("[data-modal-close]");
+    const overlay = modal;
+
+    function open() {
+      if (!modal) return;
+      modal.classList.remove("modal-container--closed");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+    }
+
+    function close() {
+      if (!modal) return;
+      modal.classList.add("modal-container--closed");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    trigger?.addEventListener("click", function (e: Event) {
+      e.preventDefault();
+      open();
+    });
+
+    closeBtn?.addEventListener("click", close);
+
+    overlay.addEventListener("click", function (e: Event) {
+      if (e.target === overlay) close();
+    });
+
+    document.addEventListener("keydown", function (e: KeyboardEvent) {
+      if (e.key === "Escape") close();
+    });
+  })();
+</script>
+
+<style>
+  .modal-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 100;
+  }
+
+  .modal-container--closed {
+    display: none;
+  }
+
+  .modal {
+    position: relative;
+    margin: auto;
+    padding: 40px;
+    background-color: #ffffff;
+  }
+
+  .modal-auth {
+    width: 360px;
+  }
+
+  .modal-close-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 44px;
+    color: #242424;
+    background-color: #ffffff;
+    border: none;
+    cursor: pointer;
+  }
+
+  .modal-close-button:hover {
+    color: #af7842;
+  }
+
+  .modal-title {
+    margin: 0;
+    margin-bottom: 24px;
+    font-family: var(--font-family-heading);
+    font-size: 32px;
+    line-height: 35px;
+    font-weight: 700;
+    color: #000000;
+    text-transform: uppercase;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .auth-form .field-group {
+    margin: 0;
+    margin-bottom: 16px;
+  }
+
+  .auth-form .field {
+    width: 100%;
+  }
+
+  .auth-form-user-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 400;
+  }
+
+  .auth-form-user-options .control-label {
+    font-weight: 400;
+  }
+
+  .auth-form-recovery {
+    font-size: 14px;
+    line-height: 22px;
+    color: #000000;
+    text-decoration: underline;
+  }
+
+  .auth-form-button {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .auth-form-register {
+    width: 100%;
+    text-align: center;
+  }
+</style>

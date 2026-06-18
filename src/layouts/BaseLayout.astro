@@ -1,12 +1,27 @@
 ---
-import { SITE, NAVIGATION } from "@data/index";
 import "@styles/global.css";
+
+import ClientRouter from "astro/components/ClientRouter.astro";
+import Header from "@components/Header.astro";
+import AuthModal from "@components/AuthModal.astro";
+import TelegramIcon from "@components/icons/TelegramIcon.astro";
+import VkIcon from "@components/icons/VkIcon.astro";
+import YandexIcon from "@components/icons/YandexIcon.astro";
+import { SITE } from "@data/site";
 
 export interface Props {
   title?: string;
   description?: string;
   image?: string;
   noindex?: boolean;
+  /** Показывать логотип в шапке */
+  headerLogo?: boolean;
+  /** URL текущей страницы */
+  currentPath?: string;
+  /** Дополнительный класс для <main> */
+  mainClass?: string;
+  /** Фоновое изображение для <main> (url) */
+  mainBackground?: string;
 }
 
 const {
@@ -14,6 +29,10 @@ const {
   description = SITE.description,
   image = "/favicon.svg",
   noindex = false,
+  headerLogo = false,
+  currentPath = "/",
+  mainClass = "",
+  mainBackground = "",
 } = Astro.props;
 ---
 
@@ -42,6 +61,8 @@ const {
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
+    <ClientRouter />
+
     <!-- Preload fonts -->
     <link
       rel="preload"
@@ -64,69 +85,150 @@ const {
     <!-- Skip link for accessibility -->
     <a href="#main-content" class="visually-hidden skip-link"> Перейти к содержимому </a>
 
-    <header class="page-header">
-      <nav class="nav" aria-label="Основная навигация">
-        <ul class="nav__list">
-          {
-            NAVIGATION.map((item) => (
-              <li class="nav__item">
-                <a href={item.href} class="nav__link" aria-current={item.ariaCurrent || undefined}>
-                  {item.label}
-                </a>
-              </li>
-            ))
-          }
-        </ul>
-      </nav>
-    </header>
+    <!-- Шапка -->
+    <Header showLogo={headerLogo} currentPath={currentPath} />
 
-    <main id="main-content">
+    <!-- Контент -->
+    <main
+      id="main-content"
+      class:list={["main-container", mainClass]}
+      style={mainBackground ? `background-image: url("${mainBackground}")` : undefined}
+    >
       <slot />
     </main>
 
+    <!-- Подвал -->
     <footer class="page-footer">
-      <div class="page-footer__inner">
-        <div class="page-footer__contacts">
-          <h3>Контакты</h3>
-          <p>{SITE.contacts.address}</p>
-          <a href={`tel:${SITE.contacts.phone}`}>{SITE.contacts.phone}</a>
-          <br />
-          <a href={`mailto:${SITE.contacts.email}`}>{SITE.contacts.email}</a>
-        </div>
+      <div class="page-footer-container">
+        <section class="footer-contacts">
+          <h2 class="visually-hidden">Контакты</h2>
+          <img
+            class="footer-contacts-logo"
+            src="/images/logo-footer.svg"
+            width="187"
+            height="24"
+            alt="Логотип Барбершоп «Бородинский»"
+          />
+          <address class="footer-contacts-address">
+            <p class="footer-about-text">{SITE.contacts.address}</p>
+            <a class="footer-contacts-address-phone" href={`tel:${SITE.contacts.phoneClean}`}>
+              {SITE.contacts.phone}
+            </a>
+          </address>
+          <a class="footer-contacts-map-link" href="#">Как нас найти?</a>
+        </section>
 
-        <div class="page-footer__socials">
-          <h3>Мы в соцсетях</h3>
-          <ul class="socials">
-            {
-              SITE.socials.map((social) => (
-                <li class="socials__item">
-                  <a
-                    href={social.href}
-                    class="socials__link"
-                    aria-label={social.label}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {social.label}
-                  </a>
-                </li>
-              ))
-            }
+        <section class="newsletter">
+          <h2 class="page-footer-title">Получайте лучшие предложения</h2>
+          <form class="newsletter-form" action="https://echo.htmlacademy.ru/" method="post">
+            <p class="newsletter-email field-group">
+              <label class="visually-hidden" for="newsletter-email">Email</label>
+              <input
+                class="field"
+                placeholder="email@example.com"
+                type="email"
+                name="newsletter-email"
+                id="newsletter-email"
+                required
+              />
+            </p>
+            <button class="button newsletter-button" type="submit">
+              <svg
+                width="16"
+                height="16"
+                fill="currentColor"
+                aria-hidden="true"
+                focusable="false"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2.5 7.8C1 8.6 0 9 0 9s15.5-5.2 16-5.5c-.4 2-1.8 9-2 10.2-.2 1-.5 1.3-.9 1.4-.7.1-1.2-.5-1.9-1-.7-.5-3.1-2-4.2-2.8-.6-.4-.9-.4-1.4-.1l-3 1.9c-.5.3-.9.3-1.2-.1l-.7-.7c-.9-.9-1.5-1.4 0-2.3L14.5 4 2.5 7.8z"
+                ></path>
+              </svg>
+              <span class="visually-hidden">Отправить</span>
+            </button>
+          </form>
+        </section>
+
+        <section class="footer-social">
+          <h2 class="page-footer-title">Давайте дружить</h2>
+          <ul class="footer-social-list">
+            <li class="footer-social-item">
+              <a class="footer-social-link" href="#" aria-label="Телеграм">
+                <TelegramIcon size={16} />
+              </a>
+            </li>
+            <li class="footer-social-item">
+              <a class="footer-social-link" href="#" aria-label="ВКонтакте">
+                <VkIcon size={16} />
+              </a>
+            </li>
+            <li class="footer-social-item">
+              <a class="footer-social-link" href="#" aria-label="Яндекс">
+                <YandexIcon size={16} />
+              </a>
+            </li>
           </ul>
-        </div>
-
-        <div class="page-footer__copyright">
-          <p>&copy; {new Date().getFullYear()} {SITE.name}</p>
-          <a href="https://htmlacademy.ru" target="_blank" rel="noopener noreferrer">
-            HTML Academy
-          </a>
-        </div>
+          <p>
+            Сделано в
+            <a class="htmlacademy-link" href="https://htmlacademy.ru/">.html academy</a>
+          </p>
+        </section>
       </div>
     </footer>
+
+    <AuthModal />
   </body>
 </html>
 
+<script>
+  // Newsletter form validation
+  const newsletterForm = document.querySelector(".newsletter-form");
+  if (newsletterForm) {
+    const emailInput = newsletterForm.querySelector("#newsletter-email") as HTMLInputElement | null;
+
+    if (emailInput) {
+      const errorEl = document.createElement("p");
+      errorEl.className = "newsletter-error";
+      errorEl.setAttribute("aria-live", "polite");
+      emailInput.parentNode?.appendChild(errorEl);
+
+      emailInput.addEventListener("blur", function () {
+        validateEmail(this, errorEl);
+      });
+
+      newsletterForm.addEventListener("submit", function (e: Event) {
+        if (!validateEmail(emailInput, errorEl)) {
+          e.preventDefault();
+        }
+      });
+    }
+
+    function validateEmail(input: HTMLInputElement, errorEl: HTMLElement): boolean {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const message =
+        input.value && !emailRegex.test(input.value) ? "Введите корректный email" : "";
+      errorEl.textContent = message;
+      input.classList.toggle("field--invalid", Boolean(message));
+      return !message;
+    }
+  }
+</script>
+
 <style>
+  .newsletter-error {
+    margin: 0;
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 16px;
+    color: #cc0000;
+    min-height: 16px;
+  }
+
+  .field--invalid {
+    border-color: #cc0000;
+  }
+
   .skip-link:focus {
     position: fixed;
     top: 0;
@@ -142,74 +244,158 @@ const {
     clip-path: unset;
   }
 
-  .page-header {
-    background-color: var(--color-black);
-    color: var(--color-white);
-  }
-
-  .nav__list {
-    display: flex;
-    gap: 0;
-    max-width: var(--container-width);
-    margin: 0 auto;
-    padding: 0 var(--container-padding);
-  }
-
-  .nav__link {
-    display: block;
-    padding: 12px 20px;
-    font-family: var(--font-family-heading);
-    font-weight: 700;
-    font-size: 16px;
-    text-transform: uppercase;
-    color: var(--color-white);
-    transition: background-color var(--transition-fast);
-  }
-
-  .nav__link:hover,
-  .nav__link:focus-visible {
-    background-color: var(--color-brown-dark);
-  }
-
   .page-footer {
-    background-color: var(--color-gray-800);
-    color: var(--color-white);
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    background-color: #242424;
+    background-image: url("/images/bg-noisy.png");
+    background-repeat: repeat;
+  }
+
+  .page-footer-container {
+    display: flex;
+    width: 940px;
+    margin: 0 auto;
     padding: 40px 0;
   }
 
-  .page-footer__inner {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 40px;
-    max-width: var(--container-width);
-    margin: 0 auto;
-    padding: 0 var(--container-padding);
+  .footer-contacts {
+    width: 200px;
+    margin-right: 130px;
+  }
+
+  .footer-contacts-logo {
+    display: block;
+    margin-bottom: 24px;
+  }
+
+  .footer-about-text {
+    margin-top: 0;
+    margin-bottom: 4px;
   }
 
   .page-footer a {
-    color: var(--color-brown);
+    color: #ffffff;
+  }
+
+  .page-footer .htmlacademy-link {
+    font-size: 14px;
+    color: #dbb590;
+  }
+
+  .page-footer-title {
+    margin-top: 0;
+    margin-bottom: 14px;
+    font-family: "PT Sans Narrow", sans-serif;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+  }
+
+  .footer-contacts-address {
+    margin-bottom: 16px;
+    font-style: normal;
+  }
+
+  .footer-contacts-address p {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .footer-contacts-address-phone {
+    font-family: "PT Sans Narrow", sans-serif;
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 700;
     text-decoration: underline;
-    text-underline-offset: 2px;
-    transition: color var(--transition-fast);
+    text-transform: uppercase;
   }
 
-  .page-footer a:hover,
-  .page-footer a:focus-visible {
-    color: var(--color-white);
+  .footer-contacts-map-link {
+    font-family: "PT Sans Narrow", sans-serif;
+    font-size: 20px;
+    line-height: 26px;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: underline;
+    text-transform: uppercase;
   }
 
-  .socials {
+  .newsletter {
+    max-width: 300px;
+  }
+
+  .newsletter-form {
     display: flex;
-    gap: 12px;
+    width: 280px;
   }
 
-  .socials__link {
+  .newsletter-email {
+    flex-grow: 1;
+    margin: 0;
+  }
+
+  .newsletter-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
-    border: 1px solid var(--color-brown);
-    font-size: 0;
+    width: 56px;
+    height: 44px;
+    padding: 0;
+    color: #ffffff;
+  }
+
+  .footer-social {
+    margin-left: auto;
+    max-width: 190px;
+  }
+
+  .footer-social-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0;
+    margin-bottom: 28px;
+    padding: 0;
+    list-style-type: none;
+  }
+
+  .footer-social-item {
+    width: 56px;
+    height: 44px;
+    margin-right: 8px;
+    margin-bottom: 8px;
+  }
+
+  .footer-social-item:nth-child(3n) {
+    margin-right: 0;
+  }
+
+  .footer-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 44px;
+    color: #ffffff;
+    background-color: #000000;
+    text-decoration: none;
+  }
+
+  .footer-social-link:hover {
+    background-color: #814b18;
+  }
+
+  .footer-social-link:focus {
+    outline: 2px solid #dbb590;
+    background-color: #4e2e0e;
+  }
+
+  .footer-social p {
+    margin: 0;
   }
 </style>

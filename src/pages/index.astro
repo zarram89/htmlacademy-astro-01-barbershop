@@ -1,35 +1,350 @@
 ---
+import { getImage } from "astro:assets";
 import BaseLayout from "@layouts/BaseLayout.astro";
+import { ADVANTAGES } from "@data/advantages";
+import { SERVICES } from "@data/services";
+import { SITE } from "@data/site";
+import Gallery from "@components/Gallery.astro";
+import AppointmentForm from "@components/AppointmentForm.astro";
+import indexBg from "@assets/images/index-bg.jpg";
+
+const optimizedBg = await getImage({ src: indexBg });
 ---
 
-<BaseLayout>
-  <section class="hero">
-    <div class="hero__inner">
-      <h1 class="hero__title">Барбершоп «Бородинский»</h1>
-      <p class="hero__slogan">Профессиональное мужское пространство в центре Санкт-Петербурга</p>
+<BaseLayout mainClass="main-index" mainBackground={optimizedBg.src}>
+  <div class="page-container">
+    <h1 class="visually-hidden">Барбершоп «Бородинский»</h1>
+
+    <img
+      class="logo"
+      src="/images/logo-full.svg"
+      width="367"
+      height="152"
+      alt="Барбершоп «Бородинский»"
+      decoding="async"
+    />
+
+    <section class="advantages">
+      <h2 class="visually-hidden">Преимущества</h2>
+      <ul class="advantages-list">
+        {
+          ADVANTAGES.map((item) => (
+            <li class="advantages-item">
+              <h3 class="advantages-title">{item.title}</h3>
+              <p class="advantages-description">{item.description}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <!-- Первая строка карточек: услуги + галерея -->
+    <div class="index-columns index-columns--services">
+      <section class="services">
+        <h2 class="services-title">Популярные услуги</h2>
+        <ul class="services-list">
+          {
+            SERVICES.map((item) => (
+              <li class="services-item">
+                <span class="services-name">{item.name}</span>
+                <span class="services-separator" aria-hidden="true" />
+                <b class="services-price">{item.price}&nbsp;₽</b>
+              </li>
+            ))
+          }
+        </ul>
+        <a class="button button-all" href="#">Посмотреть все</a>
+      </section>
+
+      <Gallery />
     </div>
-  </section>
+
+    <!-- Вторая строка карточек: контакты + запись -->
+    <div class="index-columns index-columns--contacts">
+      <section class="contacts">
+        <h2 class="contacts-title">Контакты</h2>
+
+        <h3 class="contacts-subtitle">Барбершоп «Бородинский»</h3>
+        <address class="contacts-address">
+          <p class="contacts-address-text">{SITE.contacts.address}</p>
+        </address>
+        <a class="contacts-phone" href={`tel:${SITE.contacts.phoneClean}`}>
+          {SITE.contacts.phone}
+        </a>
+
+        <h3 class="contacts-subtitle">Время работы</h3>
+        <dl class="contacts-schedule">
+          {
+            SITE.workingHours.map((item) => (
+              <div class="contacts-schedule-row">
+                <dt class="contacts-schedule-day">{item.day}</dt>
+                <dd class="contacts-schedule-hours">{item.hours}</dd>
+              </div>
+            ))
+          }
+        </dl>
+
+        <p class="contacts-buttons">
+          <a class="button" href="#">Как проехать</a>
+          <a class="button button-feedback" href="#">Обратная связь</a>
+        </p>
+      </section>
+
+      <AppointmentForm />
+    </div>
+  </div>
 </BaseLayout>
 
 <style>
-  .hero {
-    padding: 80px 20px;
-    text-align: center;
-    background-color: var(--color-gray-100);
+  :global(.main-index) {
+    color: #ffffff;
+    background-color: #000000;
+    background-size: 100% auto;
+    background-repeat: no-repeat;
+    background-position: top center;
   }
 
-  .hero__title {
+  .logo {
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 64px;
+  }
+
+  .advantages {
+    margin-bottom: 58px;
+  }
+
+  .advantages-list {
+    display: grid;
+    gap: 30px 54.5px;
+    grid-template-columns: 277px 277px 277px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    list-style-type: none;
+    color: #ffffff;
+  }
+
+  .advantages-title {
+    position: relative;
+    margin-top: 0;
+    margin-bottom: 56px;
+    font-family: "PT Sans Narrow", sans-serif;
+    font-size: 32px;
+    line-height: 35px;
+    text-transform: uppercase;
+  }
+
+  .advantages-title::before {
+    position: absolute;
+    bottom: -35px;
+    left: 50%;
+    width: 13px;
+    height: 13px;
+    margin-left: -6.5px;
+    background-color: #ffffff;
+    content: "";
+    transform: rotate(45deg);
+  }
+
+  .advantages-description {
+    margin: 0;
+  }
+
+  /* ── Index columns (карточки) ── */
+  .index-columns {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    padding: 40px;
+    color: #242424;
+    background-color: #fbf7f4;
+    background-image: url("/images/bg-noisy.png");
+    position: relative;
+  }
+
+  .index-columns::after {
+    content: "";
+    position: absolute;
+    top: 40px;
+    bottom: 40px;
+    width: 0;
+    border-right: 1px dashed #595959;
+  }
+
+  .index-columns--services::after {
+    left: 470px;
+  }
+
+  .index-columns--contacts::after {
+    left: 430px;
+  }
+
+  .index-columns:last-child {
+    margin-bottom: 0;
+  }
+
+  /* ── Services inside index-columns ── */
+  .services {
+    width: 390px;
+  }
+
+  .services-title {
+    margin-top: 0;
+    margin-bottom: 28px;
     font-family: var(--font-family-heading);
-    font-size: 48px;
+    font-size: 32px;
+    line-height: 35px;
+    text-transform: uppercase;
+  }
+
+  .services-list {
+    margin: 0;
+    margin-bottom: 30px;
+    padding: 0;
+    font-family: var(--font-family-heading);
+    font-size: 20px;
+    line-height: 28px;
     font-weight: 700;
     text-transform: uppercase;
-    margin-bottom: 16px;
+    list-style-type: none;
   }
 
-  .hero__slogan {
-    font-size: 18px;
-    color: var(--color-gray-500);
-    max-width: 600px;
+  .services-item {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+
+  .services-item::before {
+    flex-grow: 1;
+    order: 2;
+    margin-right: 16px;
+    margin-left: 16px;
+    border-bottom: 2px dotted rgba(89, 89, 89, 0.5);
+    content: "";
+  }
+
+  .services-name {
+    order: 1;
+  }
+
+  .services-separator {
+    display: none;
+  }
+
+  .services-price {
+    order: 3;
+    font-size: 28px;
+    line-height: 28px;
+    color: #af7842;
+    white-space: nowrap;
+    word-spacing: 3px;
+  }
+
+  .button-all {
+    display: flex;
+    width: 200px;
     margin: 0 auto;
+  }
+
+  .index-columns--services {
+    --gallery-width: 390px;
+    --gallery-title-align: left;
+  }
+
+  /* ── Contacts inside index-columns ── */
+  .contacts {
+    width: 350px;
+  }
+
+  .contacts-title {
+    margin-top: 0;
+    margin-bottom: 24px;
+    font-family: var(--font-family-heading);
+    font-size: 32px;
+    line-height: 35px;
+    text-transform: uppercase;
+  }
+
+  .contacts-subtitle {
+    margin-top: 22px;
+    margin-bottom: 8px;
+    font-family: var(--font-family-heading);
+    font-size: 20px;
+    line-height: 28px;
+    text-transform: uppercase;
+    color: #af7842;
+  }
+
+  .contacts-address {
+    font-style: normal;
+  }
+
+  .contacts-address-text {
+    margin: 8px 0;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .contacts-phone {
+    display: block;
+    font-family: var(--font-family-heading);
+    font-size: 24px;
+    line-height: 28px;
+    color: #242424;
+    text-decoration: underline;
+    text-transform: uppercase;
+    letter-spacing: -2px;
+  }
+
+  .contacts-phone:hover {
+    text-decoration: none;
+  }
+
+  .contacts-schedule {
+    margin: 8px 0;
+    padding: 0;
+  }
+
+  .contacts-schedule-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  .contacts-schedule-row + .contacts-schedule-row {
+    margin-top: 4px;
+  }
+
+  .contacts-schedule-day {
+    font-weight: 400;
+  }
+
+  .contacts-schedule-hours {
+    margin: 0;
+    font-weight: 700;
+  }
+
+  .contacts-buttons {
+    margin-top: 21px;
+    margin-bottom: 0;
+  }
+
+  .contacts-buttons .button {
+    margin-right: 13px;
+    margin-bottom: 5px;
+  }
+
+  .index-columns--contacts {
+    --appointment-width: 430px;
+    --appointment-max-width: 430px;
+    --appointment-title-align: left;
+    --appointment-title-color: #242424;
+    --appointment-subtitle-align: left;
+    --appointment-subtitle-color: #595959;
   }
 </style>

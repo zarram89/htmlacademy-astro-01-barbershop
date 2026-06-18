@@ -1,0 +1,21 @@
+---
+import SearchIcon from "./icons/SearchIcon.astro";
+import CartIcon from "./icons/CartIcon.astro";
+import LoginIcon from "./icons/LoginIcon.astro";
+import ProfileIcon from "./icons/ProfileIcon.astro";
+import CloseIcon from "./icons/CloseIcon.astro";
+
+export interface Props {
+  name: "search" | "cart" | "login" | "profile" | "close";
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 16 } = Astro.props;
+---
+
+{name === "search" && <SearchIcon size={size} class={Astro.props.class} />}
+{name === "cart" && <CartIcon size={size} class={Astro.props.class} />}
+{name === "login" && <LoginIcon size={size} class={Astro.props.class} />}
+{name === "profile" && <ProfileIcon size={size} class={Astro.props.class} />}
+{name === "close" && <CloseIcon size={size} class={Astro.props.class} />}

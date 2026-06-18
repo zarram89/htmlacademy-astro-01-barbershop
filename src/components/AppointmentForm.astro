@@ -1,0 +1,367 @@
+---
+
+---
+
+<section class="appointment">
+  <h2 class="appointment__title">Записаться</h2>
+  <p class="appointment__subtitle">
+    Укажите желаемую дату и время и мы свяжемся с вами для подтверждения брони.
+  </p>
+
+  <form class="appointment__form" action="https://echo.htmlacademy.ru/" method="post" novalidate>
+    <div class="appointment__field-group">
+      <label class="appointment__label" for="appointment-date">Дата</label>
+      <input
+        class="appointment__input"
+        type="date"
+        id="appointment-date"
+        name="appointment-date"
+        required
+      />
+      <p class="appointment__error" aria-live="polite"></p>
+    </div>
+
+    <div class="appointment__field-group">
+      <label class="appointment__label" for="appointment-time">Время</label>
+      <input
+        class="appointment__input"
+        type="time"
+        id="appointment-time"
+        name="appointment-time"
+        required
+      />
+      <p class="appointment__error" aria-live="polite"></p>
+    </div>
+
+    <div class="appointment__field-group">
+      <label class="appointment__label" for="appointment-phone">Телефон</label>
+      <input
+        class="appointment__input"
+        type="tel"
+        id="appointment-phone"
+        name="appointment-phone"
+        placeholder="+7 800 000-00-00"
+        required
+      />
+      <p class="appointment__error" aria-live="polite"></p>
+    </div>
+
+    <div class="appointment__field-group">
+      <label class="appointment__label" for="appointment-name">Имя</label>
+      <input
+        class="appointment__input"
+        type="text"
+        id="appointment-name"
+        name="appointment-name"
+        placeholder="Ваше имя"
+        required
+      />
+      <p class="appointment__error" aria-live="polite"></p>
+    </div>
+
+    <button class="appointment__submit" type="submit">
+      <span class="appointment__submit-text">Записаться</span>
+      <span class="appointment__submit-loader visually-hidden" aria-hidden="true">Отправка…</span>
+    </button>
+    <p class="appointment__form-message visually-hidden" aria-live="polite"></p>
+  </form>
+</section>
+
+<script>
+  (function () {
+    const form = document.querySelector(".appointment__form") as HTMLFormElement | null;
+    if (!form) return;
+
+    const dateInput = form.querySelector("#appointment-date") as HTMLInputElement | null;
+    const timeInput = form.querySelector("#appointment-time") as HTMLInputElement | null;
+    const phoneInput = form.querySelector("#appointment-phone") as HTMLInputElement | null;
+    const nameInput = form.querySelector("#appointment-name") as HTMLInputElement | null;
+    const inputs = [dateInput, timeInput, phoneInput, nameInput] as (HTMLInputElement | null)[];
+    const submitBtn = form.querySelector(".appointment__submit") as HTMLButtonElement | null;
+    const submitText = form.querySelector(".appointment__submit-text") as HTMLElement | null;
+    const submitLoader = form.querySelector(".appointment__submit-loader") as HTMLElement | null;
+    const formMessage = form.querySelector(".appointment__form-message") as HTMLElement | null;
+
+    // ── Границы даты и времени
+    const today = new Date().toISOString().split("T")[0];
+    if (dateInput) dateInput.setAttribute("min", today);
+    if (timeInput) {
+      timeInput.setAttribute("min", "10:00");
+      timeInput.setAttribute("max", "22:00");
+    }
+
+    // ── Маска телефона +7 XXX XXX-XX-XX
+    if (phoneInput) {
+      phoneInput.addEventListener("input", function (this: HTMLInputElement) {
+        let digits = this.value.replace(/\D/g, "");
+
+        if (digits.startsWith("7") || digits.startsWith("8")) {
+          digits = digits.substring(1);
+        }
+        digits = digits.substring(0, 10);
+
+        let formatted = "+7";
+        if (digits.length > 0) {
+          formatted += " " + digits.substring(0, 3);
+        }
+        if (digits.length > 3) {
+          formatted += " " + digits.substring(3, 6);
+        }
+        if (digits.length > 6) {
+          formatted += "-" + digits.substring(6, 8);
+        }
+        if (digits.length > 8) {
+          formatted += "-" + digits.substring(8, 10);
+        }
+
+        this.value = formatted;
+      });
+    }
+
+    // ── Показать сообщение (успех / ошибка)
+    function showMessage(message: string, type: "success" | "error") {
+      if (!formMessage) return;
+      formMessage.textContent = message;
+      formMessage.className = "appointment__form-message appointment__form-message--" + type;
+    }
+
+    // ── Переключение состояния загрузки
+    function setLoading(loading: boolean) {
+      if (!submitBtn || !submitText || !submitLoader) return;
+      submitBtn.disabled = loading;
+      submitText.classList.toggle("visually-hidden", loading);
+      submitLoader.classList.toggle("visually-hidden", !loading);
+    }
+
+    // ── Валидация одного поля
+    function validateField(input: HTMLInputElement): boolean {
+      const group = input.closest(".appointment__field-group");
+      if (!group) return true;
+      const errorEl = group.querySelector(".appointment__error") as HTMLElement | null;
+      if (!errorEl) return true;
+
+      let message = "";
+
+      if (input.validity.valueMissing) {
+        const labels: Record<string, string> = {
+          "appointment-date": "Укажите дату",
+          "appointment-time": "Укажите время",
+          "appointment-phone": "Укажите телефон",
+          "appointment-name": "Укажите имя",
+        };
+        message = labels[input.id] || "Заполните это поле";
+      } else if (input.id === "appointment-date" && today && input.value < today) {
+        message = "Дата не может быть раньше сегодняшнего дня";
+      } else if (input.id === "appointment-time") {
+        const [hours, minutes] = input.value.split(":").map(Number);
+        if (isNaN(hours)) {
+          message = "Укажите время";
+        } else if (hours < 10 || hours > 22 || (hours === 22 && minutes > 0)) {
+          message = "Время должно быть с 10:00 до 22:00";
+        }
+      } else if (input.id === "appointment-phone") {
+        const phoneRegex = /^\+7 \d{3} \d{3}-\d{2}-\d{2}$/;
+        if (!phoneRegex.test(input.value)) {
+          message = "Формат: +7 XXX XXX-XX-XX";
+        }
+      }
+
+      errorEl.textContent = message;
+      input.classList.toggle("appointment__input--invalid", Boolean(message));
+      return !message;
+    }
+
+    // Валидация при потере фокуса
+    inputs.forEach(function (input) {
+      if (!input) return;
+      input.addEventListener("blur", function () {
+        validateField(this);
+      });
+    });
+
+    // ── Отправка (имитация)
+    form.addEventListener("submit", async function (e: Event) {
+      e.preventDefault();
+
+      // Очистить предыдущее сообщение
+      formMessage?.classList.add("visually-hidden");
+
+      let isValid = true;
+      inputs.forEach(function (input) {
+        if (input && !validateField(input)) {
+          isValid = false;
+        }
+      });
+
+      if (!isValid || !dateInput || !timeInput || !phoneInput || !nameInput) return;
+
+      setLoading(true);
+
+      try {
+        // В продакшене здесь будет fetch к API
+        // await fetch("/api/appointment", { method: "POST", body: JSON.stringify({...}) })
+        await new Promise((resolve) => setTimeout(resolve, 800));
+
+        showMessage("Спасибо! Мы свяжемся с вами для подтверждения брони.", "success");
+        form.reset();
+      } catch {
+        showMessage("Ошибка соединения. Проверьте интернет и попробуйте снова.", "error");
+      } finally {
+        setLoading(false);
+      }
+    });
+  })();
+</script>
+
+<style>
+  .appointment {
+    width: var(--appointment-width, auto);
+    margin-bottom: 60px;
+  }
+
+  .appointment__title {
+    margin-top: 0;
+    margin-bottom: 32px;
+    font-family: var(--font-family-heading);
+    font-size: 32px;
+    line-height: 35px;
+    text-align: var(--appointment-title-align, center);
+    color: var(--appointment-title-color, #ffffff);
+    text-transform: uppercase;
+  }
+
+  .appointment__subtitle {
+    margin-bottom: 32px;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: var(--appointment-subtitle-align, center);
+    color: var(--appointment-subtitle-color, #ffffff);
+  }
+
+  .appointment__form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 40px;
+    width: 100%;
+    max-width: var(--appointment-max-width, 430px);
+    margin: 0;
+  }
+
+  .appointment__field-group {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+
+  .appointment__label {
+    margin-bottom: 8px;
+    font-family: var(--font-family-heading);
+    font-size: 20px;
+    line-height: 28px;
+    text-transform: uppercase;
+    color: #ffffff;
+  }
+
+  .appointment__input {
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 24px;
+    font-weight: 700;
+    color: #242424;
+    background-color: #ffffff;
+    border: 2px solid #242424;
+  }
+
+  .appointment__input:hover,
+  .appointment__input:focus,
+  .appointment__input:active {
+    border-color: #af7842;
+  }
+
+  .appointment__input:focus,
+  .appointment__input:active {
+    outline: 2px solid #dbb590;
+  }
+
+  .appointment__input::placeholder {
+    color: #dbdbdb;
+    opacity: 1;
+  }
+
+  .appointment__input--invalid {
+    border-color: #cc0000;
+  }
+
+  .appointment__error {
+    margin: 0;
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 16px;
+    color: #cc0000;
+    min-height: 16px;
+  }
+
+  .appointment__submit {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
+    font-family: inherit;
+    font-size: 16px;
+    line-height: 16px;
+    font-weight: 700;
+    text-align: center;
+    color: #ffffff;
+    background-color: #000000;
+    border: none;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .appointment__submit:hover:not(:disabled) {
+    background-color: #814b18;
+  }
+
+  .appointment__submit:focus-visible {
+    outline: 2px solid #dbb590;
+    background-color: #4e2e0e;
+  }
+
+  .appointment__submit:active:not(:disabled) {
+    opacity: 0.6;
+  }
+
+  .appointment__submit:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .appointment__submit-loader {
+    font-size: 14px;
+  }
+
+  .appointment__form-message {
+    grid-column: 1 / -1;
+    margin: 0;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 20px;
+    border-radius: 2px;
+  }
+
+  .appointment__form-message--success {
+    color: #1a5c1a;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+  }
+
+  .appointment__form-message--error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+  }
+</style>

@@ -37,10 +37,15 @@
 }
 
 html {
+  height: 100%;
   scroll-behavior: smooth;
 }
 
 body {
+  min-width: 1020px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
   margin: 0;
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
@@ -84,6 +89,24 @@ button {
   cursor: pointer;
 }
 
+.page-container {
+  width: 940px;
+  margin: 0 auto;
+}
+
+.main-container {
+  flex-grow: 1;
+  padding-top: 64px;
+  padding-bottom: 60px;
+}
+
+.main-inner {
+  padding-top: 40px;
+  color: #242424;
+  background-color: #fbf7f4;
+  background-image: url("/images/bg-noisy.png");
+}
+
 .visually-hidden {
   position: absolute;
   width: 1px;
@@ -95,4 +118,114 @@ button {
   border: 0;
   clip: rect(0 0 0 0);
   clip-path: inset(100%);
+}
+
+/* ========================================
+   Shared form styles
+   ======================================== */
+
+.button {
+  display: inline-block;
+  box-sizing: border-box;
+  padding: 14px 20px;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 16px;
+  font-weight: 700;
+  text-align: center;
+  color: #ffffff;
+  background-color: #000000;
+  border: none;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.button:hover {
+  background-color: #814b18;
+}
+
+.button:focus,
+.button:active {
+  outline: 2px solid #dbb590;
+  background-color: #4e2e0e;
+}
+
+.button:disabled,
+.button-disabled {
+  color: #e7e7e7;
+  background-color: #595959;
+  pointer-events: none;
+  cursor: default;
+}
+
+.field {
+  margin: 0;
+  padding: 8px 14px;
+  font: inherit;
+  font-weight: 700;
+  background-color: #ffffff;
+  border: 2px solid #242424;
+}
+
+.field:hover,
+.field:focus,
+.field:active {
+  border-color: #af7842;
+}
+
+.field:focus,
+.field:active {
+  outline: 2px solid #dbb590;
+}
+
+.field:disabled {
+  color: #595959;
+  background-color: #dbb590;
+  border-color: #595959;
+  cursor: default;
+}
+
+.field::placeholder {
+  color: #dbdbdb;
+  opacity: 1;
+}
+
+.button-all,
+.button-next {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.button-all::after {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  background-image: url("/images/arrow-right.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  content: "";
+}
+
+.button-feedback {
+  color: #000000;
+  background-color: #ffffff;
+}
+
+.button-feedback:hover {
+  background-color: #dbb590;
+}
+
+.button-feedback:focus {
+  outline: 2px solid #af7842;
+  background-color: #dbb590;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
 }
